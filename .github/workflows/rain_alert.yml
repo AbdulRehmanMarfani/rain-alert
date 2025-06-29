@@ -1,0 +1,29 @@
+name: Rain Alert
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # Runs every day at 9 AM Pakistan time (UTC+5)
+  workflow_dispatch:      # Optional: allows manual run from GitHub UI
+
+jobs:
+  check-weather:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run script
+        env:
+          OWM_API_KEY: ${{ secrets.OWM_API_KEY }}
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+        run: python main.py
